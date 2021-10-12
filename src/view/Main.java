@@ -13,15 +13,13 @@ public class Main extends PApplet{
 		size(1200,700);
 	}
 	
-
-	
 	@Override
 	public void setup() {
-	
+		
 	}
 	
 	@Override
 	public void draw() {
-	
+		
 	}
 }
