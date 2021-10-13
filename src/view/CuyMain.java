@@ -9,7 +9,7 @@ public class CuyMain extends PApplet {
 
 	int pantalla;
 	Screen connect, game, start, instruct, winp1, winp2;
-	Boolean p1HasConnect, p2HasConnect, p1HasWon, p2HasWon;
+	boolean p1HasConnect, p2HasConnect, p1HasWon, p2HasWon;
 	SoundFile song;
 	PImage conectado1, conectado2, esperarConex1, esperarConex2, aBailar;
 	PImage btnPlay, btnExit, btnContinue, btnDance,btnPlayAgain, btnBackMenu;
@@ -28,7 +28,7 @@ public class CuyMain extends PApplet {
 
 	@Override
 	public void setup() {
-		pantalla = 4;
+		pantalla = 3;
 		connect = new ConnectScreen(this);
 		game = new GameScreen(this);
 		start = new InitScreen(this);
@@ -43,7 +43,7 @@ public class CuyMain extends PApplet {
 		aBailar = loadImage("res/img/ABailar.png");
 		p1HasConnect = false;
 		p2HasConnect = false;
-		p1HasWon = true;
+		p1HasWon = false;
 		p2HasWon = false;
 		p1 = new Cuy(1, this);
 		p2 = new Cuy(2, this);
@@ -61,7 +61,7 @@ public class CuyMain extends PApplet {
 	public void draw() {
 		changeScreen();
 		buttonSelect();
-		System.out.println(mouseX + " " + mouseY);
+		//System.out.println(mouseX + " " + mouseY);
 	}
 
 	public void changeScreen() {
@@ -140,8 +140,11 @@ public class CuyMain extends PApplet {
 	}
 
 	public void mousePressed() {
-		p1HasConnect = !p1HasConnect;
+		
+		/*
+		 p1HasConnect = !p1HasConnect;
 		p2HasConnect = !p2HasConnect;
+		*/
 		switch (pantalla) {
 		case 0:
 			// DE INICIO A INSTRUCCIONES
@@ -178,4 +181,9 @@ public class CuyMain extends PApplet {
 			break;
 		}
 	}
+public void keyPressed() {
+	p1.dance();
+	p2.dance();
+}
+	
 }
