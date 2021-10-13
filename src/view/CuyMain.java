@@ -1,6 +1,9 @@
 package view;
 
+import java.util.ArrayList;
+
 import model.Cuy;
+import model.Flecha;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.sound.SoundFile;
@@ -14,6 +17,8 @@ public class CuyMain extends PApplet {
 	PImage conectado1, conectado2, esperarConex1, esperarConex2, aBailar;
 	PImage btnPlay, btnExit, btnContinue, btnDance,btnPlayAgain, btnBackMenu;
 	Cuy p1, p2;
+	ArrayList<Flecha> flechas;
+	Flecha[] flechitas;
 
 	public static void main(String[] args) {
 		PApplet.main(CuyMain.class.getName());
@@ -55,13 +60,47 @@ public class CuyMain extends PApplet {
 		btnPlayAgain = loadImage("res/img/BtnPlayAgain.png");
 		btnBackMenu = loadImage("res/img/BtnBackMenu.png");
 		// song.play();
+		flechas = new ArrayList<Flecha>();
+		flechitas = new Flecha[26];
+		createArrows();
 	}
 
+	public void createArrows() {
+		int tipo;
+
+		for (int i = 0; i < flechitas.length; i++) {
+		tipo = (int) random(1,5);
+		Flecha f = new Flecha(width/2-(112/2),10*(i+10),tipo,this);
+		if(i!=0) {
+			tipo = (int) random(1,5);
+			Flecha f1 = new Flecha(width/2-(112/2),10*(i+10),tipo,this);
+			//while(flechas.get(i-1)==flechas.get(i)) {
+			while(flechitas[i-1].getType()==tipo) {
+				tipo = (int) random(1,5);
+				f1 = new Flecha(width/2-(112/2),10*(i+10),tipo,this);
+			}	
+			//flechas.add(f1);
+			flechitas[i] = f1;
+		}else {
+			//flechas.add(f);
+			flechitas[i] = f;
+			
+		}
+		}
+	}
+	public void drawArrows() {
+		for (int i = 0; i < flechitas.length; i++) {
+			flechitas[i].draw();
+		}
+	}
 	@Override
 	public void draw() {
 		changeScreen();
 		buttonSelect();
+		
+		//System.out.println(flechitas.length);
 		//System.out.println(mouseX + " " + mouseY);
+	
 	}
 
 	public void changeScreen() {
@@ -92,6 +131,7 @@ public class CuyMain extends PApplet {
 			game.draw();
 			p1.draw();
 			p2.draw();
+			drawArrows();
 			break;
 		case 4:
 			if (p1HasWon) {
