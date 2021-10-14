@@ -1,5 +1,6 @@
 package view;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -18,12 +19,15 @@ public class CuyMain extends PApplet {
 	Screen connect, game, start, instruct, winp1, winp2;
 	boolean p1HasConnect, p2HasConnect, p1HasWon, p2HasWon;
 	SoundFile song;
-	PImage conectado1, conectado2, esperarConex1, esperarConex2, aBailar;
+	PImage conectado1, conectado2, esperarConex1, esperarConex2, aBailar,vida;
 	PImage btnPlay, btnExit, btnContinue, btnDance, btnPlayAgain, btnBackMenu;
 	Cuy p1, p2;
 	Flecha[] flechitas;
-	Timer timer;
-	TimerTask task;
+	ArrayList<Integer> vidasP1;
+	ArrayList<Integer> vidasP2;
+	Timer timerF;
+	Timer timerL;
+	TimerTask task,task2;
 	
 	private String direc;
 
@@ -59,13 +63,15 @@ public class CuyMain extends PApplet {
 		esperarConex1 = loadImage("res/img/EsperarConex1.png");
 		esperarConex2 = loadImage("res/img/EsperarConex2.png");
 		aBailar = loadImage("res/img/ABailar.png");
+		vida = loadImage("res/img/Vida.png");
 		p1HasConnect = false;
 		p2HasConnect = false;
 		p1HasWon = false;
 		p2HasWon = false;
 		p1 = new Cuy(1, this);
 		p2 = new Cuy(2, this);
-		timer = new Timer();
+		timerF = new Timer();
+		timerL = new Timer();
 
 		// BOTONES
 		btnPlay = loadImage("res/img/BtnPlay.png");
@@ -76,9 +82,18 @@ public class CuyMain extends PApplet {
 		btnBackMenu = loadImage("res/img/BtnBackMenu.png");
 
 		flechitas = new Flecha[26];
+		
+		vidasP1 = new ArrayList<Integer>();
+		vidasP1.add(1);
+		vidasP1.add(1);
+		vidasP1.add(1);
+		vidasP2 = new ArrayList<Integer>();
+		vidasP2.add(1);
+		vidasP2.add(1);
+		vidasP2.add(1);
 		createArrows();
 		moveSetup();
-
+		lifeSetup();
 		direc = " ";
 		
 		// MULTICLIENTE
@@ -95,11 +110,21 @@ public class CuyMain extends PApplet {
 		p1 = new Cuy(1, this);
 		p2 = new Cuy(2, this);
 		flechitas = new Flecha[26];
-		timer = new Timer();
+		vidasP1 = new ArrayList<Integer>();
+		vidasP1.add(1);
+		vidasP1.add(1);
+		vidasP1.add(1);
+		vidasP2 = new ArrayList<Integer>();
+		vidasP2.add(1);
+		vidasP2.add(1);
+		vidasP2.add(1);
+		timerF = new Timer();
+		timerL = new Timer();
 		createArrows();
 		moveSetup();
+		lifeSetup();
 		song.play();
-		timer.scheduleAtFixedRate(task, 337,2400);
+		timerF.scheduleAtFixedRate(task, 337,2400);
 	}
 
 	public void createArrows() {
@@ -128,6 +153,18 @@ public class CuyMain extends PApplet {
 			flechitas[i].draw();
 		}
 	}
+	public void drawLives() {
+		for (int i = 0; i < vidasP1.size(); i++) {
+			if(vidasP1.get(i)!=0){
+			image(vida,260+(40*i),105);
+			}
+		}
+		for (int i = 0; i < vidasP2.size(); i++) {
+			if(vidasP2.get(i)!=0){
+			image(vida,995+(40*i),105);
+			}
+		}
+	}
 
 	public void moveSetup() {
 		task = new TimerTask() {
@@ -135,6 +172,10 @@ public class CuyMain extends PApplet {
 
 				flechitas[flechaActual].setMov(true);
 				flechaActual++;
+				if(flechaActual==1) {
+					System.out.println("ya");
+					timerL.scheduleAtFixedRate(task2, 2299, 2400);
+				}
 				if (flechaActual == 26) {
 					gameover();
 				}
@@ -142,6 +183,19 @@ public class CuyMain extends PApplet {
 			}
 		};
 	}
+	public void lifeSetup() {
+		task2 = new TimerTask() {
+			public void run() {
+				System.out.println(flechitas[flechaActual-1].getPosY());
+				if(flechitas[flechaActual-1].isP1Scored()==false&&flechitas[flechaActual-1].getPosY()>=630) {
+					vidasP1.remove(vidasP1.size()-1);
+					}
+					if(flechitas[flechaActual-1].isP2Scored()==false&&flechitas[flechaActual-1].getPosY()>=630) {
+						vidasP2.remove(vidasP2.size()-1);
+						}	
+			}
+	};
+}
 
 	public void moveArrows() {
 		for (int i = 0; i < flechitas.length; i++) {
@@ -188,11 +242,16 @@ public class CuyMain extends PApplet {
 			p1.draw();
 			p2.draw();
 			drawArrows();
+			drawLives();
 			moveArrows();
+			//loseLives();
+			winByLives();
 			textSize(16);
 			fill(255);
+		//*/*/*/*/*/*Pintar puntajes
 			text(puntaje1,158,124);
-			text(puntaje2,924,124);
+			text(puntaje2,894,124);
+		//*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
 			break;
 		case 4:
 			if (p1HasWon) {
@@ -204,8 +263,39 @@ public class CuyMain extends PApplet {
 		}
 
 	}
+	public void loseLives(){
+	try {
+		flechitas[flechaActual-1].getType();
+	} catch (ArrayIndexOutOfBoundsException e) {
+		return;
+	}
+			if(flechitas[flechaActual-1].isP1Scored()==false&&flechitas[flechaActual-1].getPosY()>=630) {
+			vidasP1.remove(vidasP1.size()-1);
+			}
+			if(flechitas[flechaActual-1].isP2Scored()==false&&flechitas[flechaActual-1].getPosY()>=630) {
+				vidasP2.remove(vidasP2.size()-1);
+				}
+	}
+	public void winByLives() {
+		
+		if(vidasP1.size()==0) {
+			timerF.cancel();
+			timerL.cancel();
+			song.stop();
+			p2HasWon=true;
+			pantalla=4;
+		}else if(vidasP2.size()==0) {
+			timerF.cancel();
+			timerL.cancel();
+			song.stop();
+			p1HasWon=true;
+			pantalla=4;
+		}
+		
+	}
 public void gameover() {
-	timer.cancel();
+	timerF.cancel();
+	timerL.cancel();
 	
 	if(puntaje1>puntaje2) {
 		p1HasWon=true;
@@ -264,7 +354,8 @@ public void gameover() {
 				pantalla = 3;
 				song.play();
 
-				timer.scheduleAtFixedRate(task, 337, 2400);
+				timerF.scheduleAtFixedRate(task, 337, 2400);
+	
 			}
 			// DE INICIO A SALIR
 			if ((463 < mouseX && mouseX < 730) && (523 < mouseY && mouseY < 625)) {
@@ -360,7 +451,59 @@ public void score() {
 				}
 	
 				
-
+				//*/*/*/*/*/*/*/*/*JUGADOR 2*/*/*/*/*/*/*/*/*/
+				
+				//+*+*+*+*+*FLECHA ARRIBA+*+*+*+*+*+*+*+*+*+*
+				//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+				if(flechitas[flechaActual-1].getType()==1&&p2.getAzulDir()==87) {
+				//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+					if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+				//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+					if(flechitas[flechaActual-1].isP2Scored()==false) {
+						puntaje2+=100;
+						flechitas[flechaActual-1].setP2Scored(true);
+					}
+					}
+				}
+				
+				//+*+*+*+*+*FLECHA IZQUIERDA+*+*+*+*+*+*+*+*+*+*
+				//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+					if(flechitas[flechaActual-1].getType()==3&&p2.getAzulDir()==65) {
+					//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+						if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+					//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+						if(flechitas[flechaActual-1].isP2Scored()==false) {
+							puntaje2+=100;
+							flechitas[flechaActual-1].setP2Scored(true);
+						}
+						}
+					}
+					
+					//+*+*+*+*+*FLECHA DERECHA+*+*+*+*+*+*+*+*+*+*
+					//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRazulECCION DE INPUT DEL JUGADOR SEA LA MISMA
+						if(flechitas[flechaActual-1].getType()==4&&p2.getRojoDir()==68) {
+						//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+							if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+						//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+							if(flechitas[flechaActual-1].isP2Scored()==false) {
+								puntaje2+=100;
+								flechitas[flechaActual-1].setP2Scored(true);
+							}
+							}
+						}
+					
+						//+*+*+*+*+*FLECHA ABAJO+*+*+*+*+*+*+*+*+*+*
+						//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+							if(flechitas[flechaActual-1].getType()==2&&p2.getAzulDir()==83) {
+							//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+								if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+							//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+								if(flechitas[flechaActual-1].isP1Scored()==false) {
+									puntaje2+=100;
+									flechitas[flechaActual-1].setP1Scored(true);
+								}
+								}
+							}
 	
 	
 
