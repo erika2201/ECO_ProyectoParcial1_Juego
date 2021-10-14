@@ -8,16 +8,26 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.UUID;
+
+import model.Message;
 
 public class Session extends Thread {
 
+	
+	private Message message;
+	private String id;
     private Socket socketcito;
     private BufferedWriter escritorcito;
     private BufferedReader lectorcito; //este talvez no es necesario
     private CuyMain observer;
     
+    
+    //METODO DE SUSCRIPCIÓN
     public Session (Socket socketcito) {
     	this.socketcito = socketcito;
+    	this.id = UUID.randomUUID().toString();
+    	message = new Message();
     }
     
     @Override
@@ -36,8 +46,7 @@ public class Session extends Thread {
                 System.out.println("Esperando mensaje....");
                 String line = lectorcito.readLine();
                 System.out.println("Recibido: " + line);
-                //Falta observer
-                //observer.onMessage(this, lastMessage);
+                observer.onMessage(this, line);
           
             }
 		} catch (Exception ex) {
@@ -60,7 +69,23 @@ public class Session extends Thread {
     }
     
   //Método de suscrpción
-    public void setCuyMain (CuyMain observer){
+    public void setObserver (CuyMain observer){
      	this.observer = observer;
     }
+    
+    
+    public String getID () {
+    	return this.id;
+    }
+
+	public Message getMessage() {
+		return this.message;
+	}
+
+	public void setMessage(Message direccion) {
+		this.message = message;
+		
+	}
+
+
 }

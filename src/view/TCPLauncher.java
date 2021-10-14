@@ -1,19 +1,11 @@
 package view;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
-import com.google.gson.Gson;
-
-import model.Message;
 
 public class TCPLauncher extends Thread {
 
@@ -32,6 +24,7 @@ public class TCPLauncher extends Thread {
     
     private ServerSocket server;
     private CuyMain observer;
+    private ArrayList<Session>sesiones;
     
     //Método de suscrpción
     public void setCuyMain (CuyMain observer){
@@ -39,9 +32,10 @@ public class TCPLauncher extends Thread {
     }
     
     @Override
-    public void run(){
-
+    public void run(){    	
         try {
+        	sesiones = new ArrayList<Session>();
+    
         	// Paso 1: Esperar una conexion
 			server = new ServerSocket(6969);
 			
@@ -52,8 +46,10 @@ public class TCPLauncher extends Thread {
 				System.out.println("Esperando conexión....");
 				Socket socketcito = server.accept();
 				Session session = new Session(socketcito);
-				session.setCuyMain(observer);
+				session.setObserver(observer);
 				session.start();
+				
+				sesiones.add(session);
 				System.out.println("Cliente conectado!!!");
 			}
 			
@@ -68,5 +64,10 @@ public class TCPLauncher extends Thread {
             e.printStackTrace();
         }
     }
+
+	public ArrayList<Session> getSessions() {
+		return this.sesiones;
+		
+	}
   
 }

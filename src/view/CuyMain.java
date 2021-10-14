@@ -100,6 +100,12 @@ public class CuyMain extends PApplet {
 		launcher = TCPLauncher.getInstance();
 		launcher.setCuyMain(this);
 		launcher.start();
+	
+		/*for (int i = 0; i <launcher.getSessions().size(); i++) {
+			Session session= launcher.getSessions().get(i);
+			text(session.getMessage().getKey(), 100, 100);
+		} */
+		
 
 	}
 	public void reset() {
@@ -511,12 +517,15 @@ public void score() {
 }
 	
 	//MULTICLIENTE/OBSERVER
-	public void OnMessage(Session s, String line) {
+	public void onMessage(Session s, String line) {
+		
+		System.out.println("Mensaje llegó de:"+ s.getID() + ":" + line);
 		
 		//DESERIALIZAR 
 		Gson gson = new Gson();
 		Message direccion = gson.fromJson(line, Message.class);
-		direc = direccion.getKey();
+		//direc = direccion.getKey();
+		s.setMessage(direccion);
 	}
 
 }
