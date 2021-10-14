@@ -4,10 +4,12 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 public class Flecha {
-private int posX,posY;
+private float posX,posY;
 private int type;
 private PImage arrowU,arrowD,arrowL,arrowR;
 private PApplet app;
+private float spd;
+private boolean isMov;
 public Flecha(int posX, int posY, int type, PApplet app) {	
 	this.posX = posX;
 	this.posY = posY;
@@ -17,6 +19,8 @@ public Flecha(int posX, int posY, int type, PApplet app) {
 	arrowD = app.loadImage("res/img/Abajo.png");
 	arrowL = app.loadImage("res/img/Izquierda.png");
 	arrowR = app.loadImage("res/img/Derecha.png");
+	spd = (float) 5.30342205323;
+	isMov=false;
 
 }
 public void draw() {
@@ -39,13 +43,24 @@ public void draw() {
 		break;
 	}
 }
-public int getPosX() {
+public void move() {
+	if(isMov) {
+	posY+=spd;
+	}
+}
+public boolean isMov() {
+	return isMov;
+}
+public void setMov(boolean isMov) {
+	this.isMov = isMov;
+}
+public float getPosX() {
 	return posX;
 }
 public void setPosX(int posX) {
 	this.posX = posX;
 }
-public int getPosY() {
+public float getPosY() {
 	return posY;
 }
 public void setPosY(int posY) {

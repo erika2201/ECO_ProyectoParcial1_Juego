@@ -1,6 +1,11 @@
 package view;
 
-import java.util.ArrayList;
+
+
+
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import model.Cuy;
 import model.Flecha;
@@ -10,7 +15,7 @@ import processing.sound.SoundFile;
 
 public class CuyMain extends PApplet {
 
-	int pantalla;
+	int pantalla, flechaActual;
 	Screen connect, game, start, instruct, winp1, winp2;
 	boolean p1HasConnect, p2HasConnect, p1HasWon, p2HasWon;
 	SoundFile song;
@@ -18,6 +23,8 @@ public class CuyMain extends PApplet {
 	PImage btnPlay, btnExit, btnContinue, btnDance,btnPlayAgain, btnBackMenu;
 	Cuy p1, p2;
 	Flecha[] flechitas;
+	Timer timer;
+	TimerTask task;
 
 	public static void main(String[] args) {
 		PApplet.main(CuyMain.class.getName());
@@ -32,7 +39,8 @@ public class CuyMain extends PApplet {
 
 	@Override
 	public void setup() {
-		pantalla = 3;
+		pantalla = 0;
+		flechaActual=0;
 		connect = new ConnectScreen(this);
 		game = new GameScreen(this);
 		start = new InitScreen(this);
@@ -51,6 +59,9 @@ public class CuyMain extends PApplet {
 		p2HasWon = false;
 		p1 = new Cuy(1, this);
 		p2 = new Cuy(2, this);
+		timer = new Timer();
+		
+		
 		//BOTONES
 		btnPlay = loadImage("res/img/BtnPlay.png");
 		btnExit = loadImage("res/img/BtnExit.png");
@@ -58,9 +69,13 @@ public class CuyMain extends PApplet {
 		btnDance = loadImage("res/img/BtnDance.png");
 		btnPlayAgain = loadImage("res/img/BtnPlayAgain.png");
 		btnBackMenu = loadImage("res/img/BtnBackMenu.png");
-		// song.play();
+	
+		
 		flechitas = new Flecha[26];
 		createArrows();
+		moveSetup();
+		
+		
 	}
 
 	public void createArrows() {
@@ -68,13 +83,13 @@ public class CuyMain extends PApplet {
 
 		for (int i = 0; i < flechitas.length; i++) {
 		tipo = (int) random(1,5);
-		Flecha f = new Flecha(width/2-(112/2),10*(i+10),tipo,this);
+		Flecha f = new Flecha(width/2-(112/2),-96,tipo,this);
 		if(i!=0) {
 			tipo = (int) random(1,5);
-			Flecha f1 = new Flecha(width/2-(112/2),10*(i+10),tipo,this);
+			Flecha f1 = new Flecha(width/2-(112/2),-96,tipo,this);
 			while(flechitas[i-1].getType()==tipo) {
 				tipo = (int) random(1,5);
-				f1 = new Flecha(width/2-(112/2),10*(i+10),tipo,this);
+				f1 = new Flecha(width/2-(112/2),-96,tipo,this);
 			}	
 			
 			flechitas[i] = f1;
@@ -90,6 +105,26 @@ public class CuyMain extends PApplet {
 			flechitas[i].draw();
 		}
 	}
+	public void moveSetup() {
+		task = new TimerTask() {
+			public void run() {
+					
+					flechitas[flechaActual].setMov(true);
+				flechaActual++;
+					if(flechaActual==26) {
+						gameover();
+					}
+			
+					
+			}
+		};
+	}
+	
+	public void moveArrows() {
+		for (int i = 0; i < flechitas.length; i++) {
+			flechitas[i].move();
+		}
+	}
 	@Override
 	public void draw() {
 		changeScreen();
@@ -99,6 +134,9 @@ public class CuyMain extends PApplet {
 		//System.out.println(mouseX + " " + mouseY);
 	
 	}
+	
+		
+		
 
 	public void changeScreen() {
 		switch (pantalla) {
@@ -129,6 +167,7 @@ public class CuyMain extends PApplet {
 			p1.draw();
 			p2.draw();
 			drawArrows();
+			moveArrows();
 			break;
 		case 4:
 			if (p1HasWon) {
@@ -140,7 +179,9 @@ public class CuyMain extends PApplet {
 		}
 
 	}
-
+public void gameover() {
+	timer.cancel();
+}
 	public void buttonSelect() {
 		switch (pantalla) {
 		case 0:
@@ -186,7 +227,10 @@ public class CuyMain extends PApplet {
 		case 0:
 			// DE INICIO A INSTRUCCIONES
 			if ((463 < mouseX && mouseX < 730) && (371 < mouseY && mouseY < 473)) {
-				pantalla = 1;
+				pantalla = 3;
+				song.play();
+				
+				timer.scheduleAtFixedRate(task, 337,2400);
 			}
 			// DE INICIO A SALIR
 			if ((463 < mouseX && mouseX < 730) && (523 < mouseY && mouseY < 625)) {
@@ -203,6 +247,7 @@ public class CuyMain extends PApplet {
 			// DE CONEXION A JUGAR
 			if (p1HasConnect && p2HasConnect && (467 < mouseX && mouseX < 730) && (498 < mouseY && mouseY < 601)) {
 				pantalla = 3;
+				song.play();
 			}
 			break;
 		case 4:
