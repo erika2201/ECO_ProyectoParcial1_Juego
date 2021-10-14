@@ -14,7 +14,7 @@ public class Session extends Thread {
     private Socket socketcito;
     private BufferedWriter escritorcito;
     private BufferedReader lectorcito; //este talvez no es necesario
-    //Falta observer
+    private CuyMain observer;
     
     public Session (Socket socketcito) {
     	this.socketcito = socketcito;
@@ -37,7 +37,7 @@ public class Session extends Thread {
                 String line = lectorcito.readLine();
                 System.out.println("Recibido: " + line);
                 //Falta observer
-                //observer.cuandoLlegueMensaje("J1", lastMessage);
+                //observer.onMessage(this, lastMessage);
           
             }
 		} catch (Exception ex) {
@@ -60,7 +60,7 @@ public class Session extends Thread {
     }
     
   //Método de suscrpción
-    /*public void setObserver (Servidor observer){
+    public void setCuyMain (CuyMain observer){
      	this.observer = observer;
-    }*/
+    }
 }

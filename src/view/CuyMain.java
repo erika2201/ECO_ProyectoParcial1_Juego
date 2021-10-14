@@ -1,14 +1,13 @@
 package view;
 
-
-
-
-
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.google.gson.Gson;
+
 import model.Cuy;
 import model.Flecha;
+import model.Message;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.sound.SoundFile;
@@ -20,11 +19,16 @@ public class CuyMain extends PApplet {
 	boolean p1HasConnect, p2HasConnect, p1HasWon, p2HasWon;
 	SoundFile song;
 	PImage conectado1, conectado2, esperarConex1, esperarConex2, aBailar;
-	PImage btnPlay, btnExit, btnContinue, btnDance,btnPlayAgain, btnBackMenu;
+	PImage btnPlay, btnExit, btnContinue, btnDance, btnPlayAgain, btnBackMenu;
 	Cuy p1, p2;
 	Flecha[] flechitas;
 	Timer timer;
 	TimerTask task;
+	
+	private String direc;
+
+	// MULTICLIENTE
+	private TCPLauncher launcher;
 
 	public static void main(String[] args) {
 		PApplet.main(CuyMain.class.getName());
@@ -40,7 +44,7 @@ public class CuyMain extends PApplet {
 	@Override
 	public void setup() {
 		pantalla = 0;
-		flechaActual=0;
+		flechaActual = 0;
 		connect = new ConnectScreen(this);
 		game = new GameScreen(this);
 		start = new InitScreen(this);
@@ -60,83 +64,84 @@ public class CuyMain extends PApplet {
 		p1 = new Cuy(1, this);
 		p2 = new Cuy(2, this);
 		timer = new Timer();
-		
-		
-		//BOTONES
+
+		// BOTONES
 		btnPlay = loadImage("res/img/BtnPlay.png");
 		btnExit = loadImage("res/img/BtnExit.png");
 		btnContinue = loadImage("res/img/BtnContinue.png");
 		btnDance = loadImage("res/img/BtnDance.png");
 		btnPlayAgain = loadImage("res/img/BtnPlayAgain.png");
 		btnBackMenu = loadImage("res/img/BtnBackMenu.png");
-	
-		
+
 		flechitas = new Flecha[26];
 		createArrows();
 		moveSetup();
+
+		direc = " ";
 		
-		
+		// MULTICLIENTE
+		launcher = TCPLauncher.getInstance();
+		launcher.setCuyMain(this);
+		launcher.start();
+
 	}
 
 	public void createArrows() {
 		int tipo;
 
 		for (int i = 0; i < flechitas.length; i++) {
-		tipo = (int) random(1,5);
-		Flecha f = new Flecha(width/2-(112/2),-96,tipo,this);
-		if(i!=0) {
-			tipo = (int) random(1,5);
-			Flecha f1 = new Flecha(width/2-(112/2),-96,tipo,this);
-			while(flechitas[i-1].getType()==tipo) {
-				tipo = (int) random(1,5);
-				f1 = new Flecha(width/2-(112/2),-96,tipo,this);
-			}	
-			
-			flechitas[i] = f1;
-		}else {
-			
-			flechitas[i] = f;
-			
-		}
+			tipo = (int) random(1, 5);
+			Flecha f = new Flecha(width / 2 - (112 / 2), -96, tipo, this);
+			if (i != 0) {
+				tipo = (int) random(1, 5);
+				Flecha f1 = new Flecha(width / 2 - (112 / 2), -96, tipo, this);
+				while (flechitas[i - 1].getType() == tipo) {
+					tipo = (int) random(1, 5);
+					f1 = new Flecha(width / 2 - (112 / 2), -96, tipo, this);
+				}
+				flechitas[i] = f1;
+			} else {
+
+				flechitas[i] = f;
+			}
 		}
 	}
+
 	public void drawArrows() {
 		for (int i = 0; i < flechitas.length; i++) {
 			flechitas[i].draw();
 		}
 	}
+
 	public void moveSetup() {
 		task = new TimerTask() {
 			public void run() {
-					
-					flechitas[flechaActual].setMov(true);
+
+				flechitas[flechaActual].setMov(true);
 				flechaActual++;
-					if(flechaActual==26) {
-						gameover();
-					}
-			
-					
+				if (flechaActual == 26) {
+					gameover();
+				}
+
 			}
 		};
 	}
-	
+
 	public void moveArrows() {
 		for (int i = 0; i < flechitas.length; i++) {
 			flechitas[i].move();
 		}
 	}
+
 	@Override
 	public void draw() {
 		changeScreen();
 		buttonSelect();
-		
-		//System.out.println(flechitas.length);
-		//System.out.println(mouseX + " " + mouseY);
-	
+
+		// System.out.println(flechitas.length);
+		// System.out.println(mouseX + " " + mouseY);
+
 	}
-	
-		
-		
 
 	public void changeScreen() {
 		switch (pantalla) {
@@ -179,9 +184,11 @@ public class CuyMain extends PApplet {
 		}
 
 	}
-public void gameover() {
-	timer.cancel();
-}
+
+	public void gameover() {
+		timer.cancel();
+	}
+
 	public void buttonSelect() {
 		switch (pantalla) {
 		case 0:
@@ -206,7 +213,7 @@ public void gameover() {
 			if ((47 < mouseX && mouseX < 310) && (378 < mouseY && mouseY < 643)) {
 				image(btnPlayAgain, 0, 0);
 			}
-			
+
 			if ((380 < mouseX && mouseX < 643) && (378 < mouseY && mouseY < 643)) {
 				image(btnBackMenu, 0, 0);
 			}
@@ -218,19 +225,18 @@ public void gameover() {
 	}
 
 	public void mousePressed() {
-		
+
 		/*
-		 p1HasConnect = !p1HasConnect;
-		p2HasConnect = !p2HasConnect;
-		*/
+		 * p1HasConnect = !p1HasConnect; p2HasConnect = !p2HasConnect;
+		 */
 		switch (pantalla) {
 		case 0:
 			// DE INICIO A INSTRUCCIONES
 			if ((463 < mouseX && mouseX < 730) && (371 < mouseY && mouseY < 473)) {
 				pantalla = 3;
 				song.play();
-				
-				timer.scheduleAtFixedRate(task, 337,2400);
+
+				timer.scheduleAtFixedRate(task, 337, 2400);
 			}
 			// DE INICIO A SALIR
 			if ((463 < mouseX && mouseX < 730) && (523 < mouseY && mouseY < 625)) {
@@ -263,9 +269,19 @@ public void gameover() {
 			break;
 		}
 	}
-public void keyPressed() {
-	p1.dance();
-	p2.dance();
-}
+
+	public void keyPressed() {
+		p1.dance();
+		p2.dance();
+	}
 	
+	//MULTICLIENTE/OBSERVER
+	public void OnMessage(Session s, String line) {
+		
+		//DESERIALIZAR 
+		Gson gson = new Gson();
+		Message direccion = gson.fromJson(line, Message.class);
+		direc = direccion.getKey();
+	}
+
 }

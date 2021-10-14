@@ -31,13 +31,12 @@ public class TCPLauncher extends Thread {
     //FIN SINGLETON
     
     private ServerSocket server;
-    //falta observer
-    //private Servidor observer;
+    private CuyMain observer;
     
     //Método de suscrpción
-    /*public void setObserver (Servidor observer){
+    public void setCuyMain (CuyMain observer){
      	this.observer = observer;
-    }*/
+    }
     
     @Override
     public void run(){
@@ -53,7 +52,8 @@ public class TCPLauncher extends Thread {
 				System.out.println("Esperando conexión....");
 				Socket socketcito = server.accept();
 				Session session = new Session(socketcito);
-				//session.setObserver(observer);
+				session.setCuyMain(observer);
+				session.start();
 				System.out.println("Cliente conectado!!!");
 			}
 			
