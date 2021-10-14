@@ -173,7 +173,6 @@ public class CuyMain extends PApplet {
 				flechitas[flechaActual].setMov(true);
 				flechaActual++;
 				if(flechaActual==1) {
-					System.out.println("ya");
 					timerL.scheduleAtFixedRate(task2, 2299, 2400);
 				}
 				if (flechaActual == 26) {
@@ -186,7 +185,7 @@ public class CuyMain extends PApplet {
 	public void lifeSetup() {
 		task2 = new TimerTask() {
 			public void run() {
-				System.out.println(flechitas[flechaActual-1].getPosY());
+				//System.out.println(flechitas[flechaActual-1].getPosY());
 				if(flechitas[flechaActual-1].isP1Scored()==false&&flechitas[flechaActual-1].getPosY()>=630) {
 					vidasP1.remove(vidasP1.size()-1);
 					}
@@ -263,19 +262,7 @@ public class CuyMain extends PApplet {
 		}
 
 	}
-	public void loseLives(){
-	try {
-		flechitas[flechaActual-1].getType();
-	} catch (ArrayIndexOutOfBoundsException e) {
-		return;
-	}
-			if(flechitas[flechaActual-1].isP1Scored()==false&&flechitas[flechaActual-1].getPosY()>=630) {
-			vidasP1.remove(vidasP1.size()-1);
-			}
-			if(flechitas[flechaActual-1].isP2Scored()==false&&flechitas[flechaActual-1].getPosY()>=630) {
-				vidasP2.remove(vidasP2.size()-1);
-				}
-	}
+
 	public void winByLives() {
 		
 		if(vidasP1.size()==0) {
@@ -351,10 +338,8 @@ public void gameover() {
 		case 0:
 			// DE INICIO A INSTRUCCIONES
 			if ((463 < mouseX && mouseX < 730) && (371 < mouseY && mouseY < 473)) {
-				pantalla = 3;
-				song.play();
-
-				timerF.scheduleAtFixedRate(task, 337, 2400);
+				//pantalla = 1;
+				reset();
 	
 			}
 			// DE INICIO A SALIR
@@ -371,8 +356,8 @@ public void gameover() {
 		case 2:
 			// DE CONEXION A JUGAR
 			if (p1HasConnect && p2HasConnect && (467 < mouseX && mouseX < 730) && (498 < mouseY && mouseY < 601)) {
-				pantalla = 3;
-				song.play();
+				reset();
+				
 			}
 			break;
 		case 4:
@@ -396,24 +381,14 @@ public void keyPressed() {
 	}
 }
 public void score() {
+	
+	
+	switch(keyCode) {
 	//*/*/*/*/*/*/*/*/*JUGADOR 1*/*/*/*/*/*/*/*/*/
-	
-	//+*+*+*+*+*FLECHA ARRIBA+*+*+*+*+*+*+*+*+*+*
-	//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-	if(flechitas[flechaActual-1].getType()==1&&p1.getRojoDir()==38) {
-	//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
-		if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
-	//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
-		if(flechitas[flechaActual-1].isP1Scored()==false) {
-			puntaje1+=100;
-			flechitas[flechaActual-1].setP1Scored(true);
-		}
-		}
-	}
-	
-	//+*+*+*+*+*FLECHA IZQUIERDA+*+*+*+*+*+*+*+*+*+*
-	//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-		if(flechitas[flechaActual-1].getType()==3&&p1.getRojoDir()==37) {
+	case 38:
+		//+*+*+*+*+*FLECHA ARRIBA+*+*+*+*+*+*+*+*+*+*
+		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+		if(flechitas[flechaActual-1].getType()==1&&p1.getRojoDir()==38) {
 		//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 			if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 		//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
@@ -422,11 +397,12 @@ public void score() {
 				flechitas[flechaActual-1].setP1Scored(true);
 			}
 			}
-		}
-		
-		//+*+*+*+*+*FLECHA DERECHA+*+*+*+*+*+*+*+*+*+*
+		}	
+		break;
+	case 37:
+		//+*+*+*+*+*FLECHA IZQUIERDA+*+*+*+*+*+*+*+*+*+*
 		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-			if(flechitas[flechaActual-1].getType()==4&&p1.getRojoDir()==39) {
+			if(flechitas[flechaActual-1].getType()==3&&p1.getRojoDir()==37) {
 			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
@@ -436,74 +412,99 @@ public void score() {
 				}
 				}
 			}
-		
-			//+*+*+*+*+*FLECHA ABAJO+*+*+*+*+*+*+*+*+*+*
-			//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-				if(flechitas[flechaActual-1].getType()==2&&p1.getRojoDir()==40) {
-				//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
-					if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
-				//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
-					if(flechitas[flechaActual-1].isP1Scored()==false) {
-						puntaje1+=100;
-						flechitas[flechaActual-1].setP1Scored(true);
-					}
-					}
-				}
-	
-				
-				//*/*/*/*/*/*/*/*/*JUGADOR 2*/*/*/*/*/*/*/*/*/
-				
-				//+*+*+*+*+*FLECHA ARRIBA+*+*+*+*+*+*+*+*+*+*
+		break;
+	case 39:
+		//+*+*+*+*+*FLECHA DERECHA+*+*+*+*+*+*+*+*+*+*
 				//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-				if(flechitas[flechaActual-1].getType()==1&&p2.getAzulDir()==87) {
-				//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
-					if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
-				//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
-					if(flechitas[flechaActual-1].isP2Scored()==false) {
-						puntaje2+=100;
-						flechitas[flechaActual-1].setP2Scored(true);
-					}
-					}
-				}
-				
-				//+*+*+*+*+*FLECHA IZQUIERDA+*+*+*+*+*+*+*+*+*+*
-				//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-					if(flechitas[flechaActual-1].getType()==3&&p2.getAzulDir()==65) {
+					if(flechitas[flechaActual-1].getType()==4&&p1.getRojoDir()==39) {
 					//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 						if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 					//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
-						if(flechitas[flechaActual-1].isP2Scored()==false) {
-							puntaje2+=100;
-							flechitas[flechaActual-1].setP2Scored(true);
+						if(flechitas[flechaActual-1].isP1Scored()==false) {
+							puntaje1+=100;
+							flechitas[flechaActual-1].setP1Scored(true);
 						}
 						}
 					}
-					
-					//+*+*+*+*+*FLECHA DERECHA+*+*+*+*+*+*+*+*+*+*
-					//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRazulECCION DE INPUT DEL JUGADOR SEA LA MISMA
-						if(flechitas[flechaActual-1].getType()==4&&p2.getRojoDir()==68) {
-						//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
-							if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
-						//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
-							if(flechitas[flechaActual-1].isP2Scored()==false) {
-								puntaje2+=100;
-								flechitas[flechaActual-1].setP2Scored(true);
-							}
-							}
-						}
-					
-						//+*+*+*+*+*FLECHA ABAJO+*+*+*+*+*+*+*+*+*+*
-						//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-							if(flechitas[flechaActual-1].getType()==2&&p2.getAzulDir()==83) {
-							//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
-								if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
-							//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
-								if(flechitas[flechaActual-1].isP1Scored()==false) {
-									puntaje2+=100;
-									flechitas[flechaActual-1].setP1Scored(true);
-								}
-								}
-							}
+		break;
+	case 40:
+		//+*+*+*+*+*FLECHA ABAJO+*+*+*+*+*+*+*+*+*+*
+		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+			if(flechitas[flechaActual-1].getType()==2&&p1.getRojoDir()==40) {
+			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+				if(flechitas[flechaActual-1].isP1Scored()==false) {
+					puntaje1+=100;
+					flechitas[flechaActual-1].setP1Scored(true);
+				}
+				}
+			}
+		break;
+		
+		//*/*/*/*/*/*/*/*/*JUGADOR 2*/*/*/*/*/*/*/*/*/
+		
+	case 87:
+		//+*+*+*+*+*FLECHA ARRIBA+*+*+*+*+*+*+*+*+*+*
+		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+		if(flechitas[flechaActual-1].getType()==1&&p2.getAzulDir()==87) {
+		//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+			if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+		//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+			if(flechitas[flechaActual-1].isP2Scored()==false) {
+				puntaje2+=100;
+				flechitas[flechaActual-1].setP2Scored(true);
+			}
+			}
+		}
+		
+		break;
+		
+	case 65:
+		//+*+*+*+*+*FLECHA IZQUIERDA+*+*+*+*+*+*+*+*+*+*
+		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+			if(flechitas[flechaActual-1].getType()==3&&p2.getAzulDir()==65) {
+			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+				if(flechitas[flechaActual-1].isP2Scored()==false) {
+					puntaje2+=100;
+					flechitas[flechaActual-1].setP2Scored(true);
+				}
+				}
+			}
+		break;
+		
+	case 68:
+		//+*+*+*+*+*FLECHA DERECHA+*+*+*+*+*+*+*+*+*+*
+		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRazulECCION DE INPUT DEL JUGADOR SEA LA MISMA
+			if(flechitas[flechaActual-1].getType()==4&&p2.getAzulDir()==68) {
+			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+				if(flechitas[flechaActual-1].isP2Scored()==false) {
+					puntaje2+=100;
+					flechitas[flechaActual-1].setP2Scored(true);
+				}
+				}
+			}
+		
+		break;
+	case 83: 
+		//+*+*+*+*+*FLECHA ABAJO+*+*+*+*+*+*+*+*+*+*
+		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+			if(flechitas[flechaActual-1].getType()==2&&p2.getAzulDir()==83) {
+			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+				if(flechitas[flechaActual-1].isP2Scored()==false) {
+					puntaje2+=100;
+					flechitas[flechaActual-1].setP2Scored(true);
+				}
+				}
+			}
+		break;
+	}
 	
 	
 
