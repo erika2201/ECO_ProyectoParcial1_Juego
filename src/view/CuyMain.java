@@ -15,7 +15,7 @@ import processing.sound.SoundFile;
 
 public class CuyMain extends PApplet {
 
-	int pantalla, flechaActual;
+	int pantalla, flechaActual, puntaje1,puntaje2;
 	Screen connect, game, start, instruct, winp1, winp2;
 	boolean p1HasConnect, p2HasConnect, p1HasWon, p2HasWon;
 	SoundFile song;
@@ -41,6 +41,8 @@ public class CuyMain extends PApplet {
 	public void setup() {
 		pantalla = 0;
 		flechaActual=0;
+		puntaje1=0;
+		puntaje2=0;
 		connect = new ConnectScreen(this);
 		game = new GameScreen(this);
 		start = new InitScreen(this);
@@ -76,6 +78,20 @@ public class CuyMain extends PApplet {
 		moveSetup();
 		
 		
+	}
+	public void reset() {
+		pantalla = 3;
+		flechaActual=0;
+		puntaje1=0;
+		puntaje2=0;
+		p1 = new Cuy(1, this);
+		p2 = new Cuy(2, this);
+		flechitas = new Flecha[26];
+		timer = new Timer();
+		createArrows();
+		moveSetup();
+		song.play();
+		timer.scheduleAtFixedRate(task, 337,2400);
 	}
 
 	public void createArrows() {
@@ -130,7 +146,7 @@ public class CuyMain extends PApplet {
 		changeScreen();
 		buttonSelect();
 		
-		//System.out.println(flechitas.length);
+		
 		//System.out.println(mouseX + " " + mouseY);
 	
 	}
@@ -168,6 +184,10 @@ public class CuyMain extends PApplet {
 			p2.draw();
 			drawArrows();
 			moveArrows();
+			textSize(16);
+			fill(255);
+			text(puntaje1,158,124);
+			text(puntaje2,924,124);
 			break;
 		case 4:
 			if (p1HasWon) {
@@ -181,7 +201,17 @@ public class CuyMain extends PApplet {
 	}
 public void gameover() {
 	timer.cancel();
+	
+	if(puntaje1>puntaje2) {
+		p1HasWon=true;
+		pantalla=4;
+		
+	}else if(puntaje2>puntaje1) {
+		p2HasWon=true;
+		pantalla=4;
+	}
 }
+
 	public void buttonSelect() {
 		switch (pantalla) {
 		case 0:
@@ -253,7 +283,7 @@ public void gameover() {
 		case 4:
 			// DE VICTORIA A JUGAR
 			if ((47 < mouseX && mouseX < 310) && (378 < mouseY && mouseY < 643)) {
-				pantalla = 3;
+				reset();
 			}
 			// DE VICTORIA A INICIO
 			if ((380 < mouseX && mouseX < 643) && (378 < mouseY && mouseY < 643)) {
@@ -264,8 +294,72 @@ public void gameover() {
 		}
 	}
 public void keyPressed() {
+	if(pantalla==3) {
 	p1.dance();
 	p2.dance();
+	score();
+	}
+}
+public void score() {
+	//*/*/*/*/*/*/*/*/*JUGADOR 1*/*/*/*/*/*/*/*/*/
+	
+	//+*+*+*+*+*FLECHA ARRIBA+*+*+*+*+*+*+*+*+*+*
+	//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+	if(flechitas[flechaActual-1].getType()==1&&p1.getRojoDir()==38) {
+	//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+		if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+	//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+		if(flechitas[flechaActual-1].isP1Scored()==false) {
+			puntaje1+=100;
+			flechitas[flechaActual-1].setP1Scored(true);
+		}
+		}
+	}
+	
+	//+*+*+*+*+*FLECHA IZQUIERDA+*+*+*+*+*+*+*+*+*+*
+	//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+		if(flechitas[flechaActual-1].getType()==3&&p1.getRojoDir()==37) {
+		//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+			if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+		//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+			if(flechitas[flechaActual-1].isP1Scored()==false) {
+				puntaje1+=100;
+				flechitas[flechaActual-1].setP1Scored(true);
+			}
+			}
+		}
+		
+		//+*+*+*+*+*FLECHA DERECHA+*+*+*+*+*+*+*+*+*+*
+		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+			if(flechitas[flechaActual-1].getType()==4&&p1.getRojoDir()==39) {
+			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+				if(flechitas[flechaActual-1].isP1Scored()==false) {
+					puntaje1+=100;
+					flechitas[flechaActual-1].setP1Scored(true);
+				}
+				}
+			}
+		
+			//+*+*+*+*+*FLECHA ABAJO+*+*+*+*+*+*+*+*+*+*
+			//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+				if(flechitas[flechaActual-1].getType()==2&&p1.getRojoDir()==40) {
+				//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+					if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+				//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+					if(flechitas[flechaActual-1].isP1Scored()==false) {
+						puntaje1+=100;
+						flechitas[flechaActual-1].setP1Scored(true);
+					}
+					}
+				}
+	
+				
+
+	
+	
+
 }
 	
 }

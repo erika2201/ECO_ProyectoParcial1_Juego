@@ -66,6 +66,8 @@ public class Cuy {
 			
 		}
 	}
+	
+
 	public void dance() {
 		if (player == 1) {
 			switch (app.keyCode) {
@@ -109,4 +111,19 @@ public class Cuy {
 			}
 
 }
+	public int getAzulDir() {
+		return azulDir;
+	}
+
+	public void setAzulDir(int azulDir) {
+		this.azulDir = azulDir;
+	}
+
+	public int getRojoDir() {
+		return rojoDir;
+	}
+
+	public void setRojoDir(int rojoDir) {
+		this.rojoDir = rojoDir;
+	}
 }

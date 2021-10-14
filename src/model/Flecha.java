@@ -9,7 +9,7 @@ private int type;
 private PImage arrowU,arrowD,arrowL,arrowR;
 private PApplet app;
 private float spd;
-private boolean isMov;
+private boolean isMov,p1Scored,p2Scored;
 public Flecha(int posX, int posY, int type, PApplet app) {	
 	this.posX = posX;
 	this.posY = posY;
@@ -21,6 +21,8 @@ public Flecha(int posX, int posY, int type, PApplet app) {
 	arrowR = app.loadImage("res/img/Derecha.png");
 	spd = (float) 5.30342205323;
 	isMov=false;
+	p1Scored=false;
+	p2Scored=false;
 
 }
 public void draw() {
@@ -71,6 +73,18 @@ public int getType() {
 }
 public void setType(int type) {
 	this.type = type;
+}
+public boolean isP1Scored() {
+	return p1Scored;
+}
+public void setP1Scored(boolean p1Scored) {
+	this.p1Scored = p1Scored;
+}
+public boolean isP2Scored() {
+	return p2Scored;
+}
+public void setP2Scored(boolean p2Scored) {
+	this.p2Scored = p2Scored;
 }
 
 
