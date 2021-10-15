@@ -7,49 +7,33 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 
-public class TCPLauncher extends Thread {
-
-    //INICIO SINGLETON
-    private static TCPLauncher onlyInstance;
-
-    private TCPLauncher() {}
+public class TCPLauncher extends Thread {	
+	public TCPLauncher (IObserver app) {
+		this.app = app;
+		sesiones = new ArrayList<Session>();
+	}
     
-    public static TCPLauncher getInstance(){
-        if (onlyInstance == null){
-            onlyInstance = new TCPLauncher();
-        }
-        return onlyInstance;
-    }
-    //FIN SINGLETON
-    
+    private IObserver app;
     private ServerSocket server;
-    private CuyMain observer;
     private ArrayList<Session>sesiones;
-    
-    //Método de suscrpción
-    public void setCuyMain (CuyMain observer){
-     	this.observer = observer;
-    }
+
     
     @Override
     public void run(){    	
         try {
-        	sesiones = new ArrayList<Session>();
-    
-        	// Paso 1: Esperar una conexion
-			server = new ServerSocket(6969);
+         	// Paso 1: Esperar una conexion
+			server = new ServerSocket(2021);
 			
-			while (true) {
+			while (sesiones.size()<2) {
 				// Paso 3: Cliente y Server conectados
 				//Se vuelve repetitivo al estar dentro del while true
 				//Deja conectar un cliente y espera otro..
 				System.out.println("Esperando conexión....");
 				Socket socketcito = server.accept();
-				Session session = new Session(socketcito);
-				session.setObserver(observer);
+				Session session = new Session(socketcito, app, this.sesiones.size());
+				sesiones.add(session);
 				session.start();
 				
-				sesiones.add(session);
 				System.out.println("Cliente conectado!!!");
 			}
 		
@@ -65,5 +49,10 @@ public class TCPLauncher extends Thread {
 	public ArrayList<Session> getSesiones() {
 		return this.sesiones;
 	}
+
+	public void setSesiones(ArrayList<Session> sesiones) {
+		this.sesiones = sesiones;
+	}
   
+	
 }

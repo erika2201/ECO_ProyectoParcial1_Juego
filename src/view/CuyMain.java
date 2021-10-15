@@ -13,7 +13,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.sound.SoundFile;
 
-public class CuyMain extends PApplet{
+public class CuyMain extends PApplet implements IObserver{
 
 	int pantalla, flechaActual, puntaje1,puntaje2;
 	Screen connect, game, start, instruct, winp1, winp2;
@@ -97,8 +97,7 @@ public class CuyMain extends PApplet{
 		direc = " ";
 		
 		// MULTICLIENTE
-		launcher = TCPLauncher.getInstance();
-		launcher.setCuyMain(this);
+		launcher = new TCPLauncher (this);
 		launcher.start();
 
 	}
@@ -378,6 +377,7 @@ public void gameover() {
 			break;
 		}
 	}
+	
 public void keyPressed() {
 	if(pantalla==3) {
 	p1.dance();
@@ -385,9 +385,8 @@ public void keyPressed() {
 	score();
 	}
 }
+
 public void score() {
-	
-	
 	switch(keyCode) {
 	//*/*/*/*/*/*/*/*/*JUGADOR 1*/*/*/*/*/*/*/*/*/
 	case 38:

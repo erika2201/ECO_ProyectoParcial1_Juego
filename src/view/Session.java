@@ -14,20 +14,19 @@ import model.Message;
 
 public class Session extends Thread {
 
-	
+	private IObserver app;
 	private Message message;
-	private String id;
+	private int id;
     private Socket socketcito;
     private BufferedWriter escritorcito;
     private BufferedReader lectorcito; //este talvez no es necesario
-    private CuyMain observer;
     
-    
-    //METODO DE SUSCRIPCIÓN
-    public Session (Socket socketcito) {
+    //CONSTRUCTOR
+    public Session (Socket socketcito, IObserver app,int id) {
     	this.socketcito = socketcito;
-    	this.id = UUID.randomUUID().toString();
+    	this.id = id;
     	message = new Message();
+    	this.app = app;
     }
     
     @Override
@@ -46,7 +45,8 @@ public class Session extends Thread {
                 System.out.println("Esperando mensaje....");
                 String line = lectorcito.readLine();
                 System.out.println("Recibido: " + line);
-                observer.onMessage(this, line);
+                
+                app.onMessage(this, line);
           
             }
 		} catch (Exception ex) {
@@ -67,14 +67,8 @@ public class Session extends Thread {
                     }
                 }).start();
     }
-    
-  //Método de suscrpción
-    public void setObserver (CuyMain observer){
-     	this.observer = observer;
-    }
-    
-    
-    public String getID () {
+            
+    public int getID () {
     	return this.id;
     }
 
