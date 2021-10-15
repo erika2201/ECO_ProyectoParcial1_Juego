@@ -97,7 +97,8 @@ public class CuyMain extends PApplet implements IObserver{
 		direc = " ";
 		
 		// MULTICLIENTE
-		launcher = new TCPLauncher (this);
+		launcher = TCPLauncher.getInstance();
+		launcher.setCuyMain(this);
 		launcher.start();
 
 	}
@@ -515,13 +516,13 @@ public void score() {
 }
 	
 	//MULTICLIENTE/OBSERVER
-	public void onMessage(Session s, String line) {
+	public void onMessage(Session s, String msg) {
 		
-		System.out.println("Mensaje llegó de:"+ s.getID() + ":" + line);
+		System.out.println("Mensaje llegó de:"+ s.getID() + ":" + msg);
 		
 		//DESERIALIZAR 
 		Gson gson = new Gson();
-		Message direccion = gson.fromJson(line, Message.class);
+		Message direccion = gson.fromJson(msg, Message.class);
 		//direc = direccion.getKey();
 		s.setMessage(direccion);
 	}

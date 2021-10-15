@@ -8,12 +8,27 @@ import java.util.ArrayList;
 
 
 public class TCPLauncher extends Thread {	
-	public TCPLauncher (IObserver app) {
-		this.app = app;
-		sesiones = new ArrayList<Session>();
+	
+	//INICIO SINGLETON
+    private static TCPLauncher onlyInstance;
+
+    public static TCPLauncher getInstance(){
+        if (onlyInstance == null){
+            onlyInstance = new TCPLauncher();
+        }
+        return onlyInstance;
+    }
+    
+    private TCPLauncher() {}
+    //FIN SINGLETON
+    
+    
+    //SUSCRPCIÓN
+	public void setCuyMain (CuyMain observer) {
+		this.observer = observer;
 	}
     
-    private IObserver app;
+    private CuyMain observer;
     private ServerSocket server;
     private ArrayList<Session>sesiones;
 
@@ -21,8 +36,10 @@ public class TCPLauncher extends Thread {
     @Override
     public void run(){    	
         try {
+        	
+        	sesiones = new ArrayList<Session>();
          	// Paso 1: Esperar una conexion
-			server = new ServerSocket(2021);
+			server = new ServerSocket(6969);
 			
 			while (sesiones.size()<2) {
 				// Paso 3: Cliente y Server conectados
@@ -30,9 +47,11 @@ public class TCPLauncher extends Thread {
 				//Deja conectar un cliente y espera otro..
 				System.out.println("Esperando conexión....");
 				Socket socketcito = server.accept();
-				Session session = new Session(socketcito, app, this.sesiones.size());
-				sesiones.add(session);
+				Session session = new Session(socketcito, this.sesiones.size());
+				session.setObserver(observer);
 				session.start();
+				
+				sesiones.add(session);
 				
 				System.out.println("Cliente conectado!!!");
 			}
