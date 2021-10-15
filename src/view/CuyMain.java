@@ -212,7 +212,10 @@ public class CuyMain extends PApplet implements IObserver{
 		
 		for (int i = 0; i <launcher.getSesiones().size(); i++) {
 			Session session= launcher.getSesiones().get(i);
-			text(session.getMessage().getKey(), 100, 100);
+			if (session.getMessage().getKey() == "UP") {
+				text(session.getMessage().getKey(), 100, 100);	
+			}
+			
 		}
 
 	}
