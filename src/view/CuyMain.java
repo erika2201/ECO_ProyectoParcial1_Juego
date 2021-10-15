@@ -13,7 +13,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.sound.SoundFile;
 
-public class CuyMain extends PApplet {
+public class CuyMain extends PApplet{
 
 	int pantalla, flechaActual, puntaje1,puntaje2;
 	Screen connect, game, start, instruct, winp1, winp2;
@@ -100,12 +100,6 @@ public class CuyMain extends PApplet {
 		launcher = TCPLauncher.getInstance();
 		launcher.setCuyMain(this);
 		launcher.start();
-	
-		/*for (int i = 0; i <launcher.getSessions().size(); i++) {
-			Session session= launcher.getSessions().get(i);
-			text(session.getMessage().getKey(), 100, 100);
-		} */
-		
 
 	}
 	public void reset() {
@@ -215,6 +209,11 @@ public class CuyMain extends PApplet {
 
 		// System.out.println(flechitas.length);
 		// System.out.println(mouseX + " " + mouseY);
+		
+		for (int i = 0; i <launcher.getSesiones().size(); i++) {
+			Session session= launcher.getSesiones().get(i);
+			text(session.getMessage().getKey(), 100, 100);
+		}
 
 	}
 

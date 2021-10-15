@@ -52,10 +52,7 @@ public class TCPLauncher extends Thread {
 				sesiones.add(session);
 				System.out.println("Cliente conectado!!!");
 			}
-			
-			
 		
-			
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -65,9 +62,8 @@ public class TCPLauncher extends Thread {
         }
     }
 
-	public ArrayList<Session> getSessions() {
+	public ArrayList<Session> getSesiones() {
 		return this.sesiones;
-		
 	}
   
 }
