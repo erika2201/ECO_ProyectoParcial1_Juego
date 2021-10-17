@@ -44,7 +44,7 @@ public class Session extends Thread {
             while(true) {
                 System.out.println("Esperando mensaje....");
                 String line = lectorcito.readLine();
-                System.out.println("Recibido: " + line);
+                //System.out.println("Recibido: " + line);
                 
                 observer.onMessage(this, line);
           

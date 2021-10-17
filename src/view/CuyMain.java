@@ -29,7 +29,6 @@ public class CuyMain extends PApplet implements IObserver{
 	Timer timerL;
 	TimerTask task,task2;
 	
-	private String direc;
 
 	// MULTICLIENTE
 	private TCPLauncher launcher;
@@ -68,8 +67,8 @@ public class CuyMain extends PApplet implements IObserver{
 		p2HasConnect = false;
 		p1HasWon = false;
 		p2HasWon = false;
-		p1 = new Cuy(1, this);
-		p2 = new Cuy(2, this);
+		p1 = new Cuy(0, this);
+		p2 = new Cuy(1, this);
 		timerF = new Timer();
 		timerL = new Timer();
 
@@ -94,7 +93,7 @@ public class CuyMain extends PApplet implements IObserver{
 		createArrows();
 		moveSetup();
 		lifeSetup();
-		direc = " ";
+		
 		
 		// MULTICLIENTE
 		launcher = TCPLauncher.getInstance();
@@ -107,8 +106,8 @@ public class CuyMain extends PApplet implements IObserver{
 		flechaActual=0;
 		puntaje1=0;
 		puntaje2=0;
-		p1 = new Cuy(1, this);
-		p2 = new Cuy(2, this);
+		p1 = new Cuy(0, this);
+		p2 = new Cuy(1, this);
 		flechitas = new Flecha[26];
 		vidasP1 = new ArrayList<Integer>();
 		vidasP1.add(1);
@@ -169,7 +168,6 @@ public class CuyMain extends PApplet implements IObserver{
 	public void moveSetup() {
 		task = new TimerTask() {
 			public void run() {
-
 				flechitas[flechaActual].setMov(true);
 				flechaActual++;
 				if(flechaActual==1) {
@@ -210,14 +208,16 @@ public class CuyMain extends PApplet implements IObserver{
 		// System.out.println(flechitas.length);
 		// System.out.println(mouseX + " " + mouseY);
 		
-		for (int i = 0; i <launcher.getSesiones().size(); i++) {
-			Session session= launcher.getSesiones().get(i);
-			if (session.getMessage().getKey() == "UP") {
-				text(session.getMessage().getKey(), 100, 100);	
-			}
-			
-		}
+		
 
+	}
+	public void conexion() {
+		if(launcher.getSesiones().size()==1) {
+			p1HasConnect=true;
+		}
+		if(launcher.getSesiones().size()==2) {
+			p2HasConnect=true;
+		}
 	}
 
 	public void changeScreen() {
@@ -230,6 +230,7 @@ public class CuyMain extends PApplet implements IObserver{
 			break;
 		case 2:
 			connect.draw();
+			conexion();
 			if (!p1HasConnect) {
 				image(esperarConex1, 0, 0);
 			} else {
@@ -246,12 +247,12 @@ public class CuyMain extends PApplet implements IObserver{
 			break;
 		case 3:
 			game.draw();
-			p1.draw();
-			p2.draw();
+			p1.draw(launcher.getSesiones().get(0),launcher.getSesiones().get(0).getMessage());
+			p2.draw(launcher.getSesiones().get(1),launcher.getSesiones().get(1).getMessage());
+			
 			drawArrows();
 			drawLives();
 			moveArrows();
-			//loseLives();
 			winByLives();
 			textSize(16);
 			fill(255);
@@ -346,8 +347,8 @@ public void gameover() {
 		case 0:
 			// DE INICIO A INSTRUCCIONES
 			if ((463 < mouseX && mouseX < 730) && (371 < mouseY && mouseY < 473)) {
-				//pantalla = 1;
-				reset();
+				pantalla = 1;
+				
 	
 			}
 			// DE INICIO A SALIR
@@ -381,36 +382,38 @@ public void gameover() {
 			break;
 		}
 	}
-	
-public void keyPressed() {
-	if(pantalla==3) {
-	p1.dance();
-	p2.dance();
-	score();
-	}
-}
 
-public void score() {
-	switch(keyCode) {
+
+public void score1(Message m) {
+	//System.out.println(m.getKey());
+
+	if((flechaActual-1)>=0) {
+
+	switch(m.getKey()) {
 	//*/*/*/*/*/*/*/*/*JUGADOR 1*/*/*/*/*/*/*/*/*/
-	case 38:
+	case "UP":
+
 		//+*+*+*+*+*FLECHA ARRIBA+*+*+*+*+*+*+*+*+*+*
-		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-		if(flechitas[flechaActual-1].getType()==1&&p1.getRojoDir()==38) {
+		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL SEA LA DIRECCION CORRECTA
+		if(flechitas[flechaActual-1].getType()==1) {
+		
 		//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 			if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+			
 		//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
 			if(flechitas[flechaActual-1].isP1Scored()==false) {
+				
 				puntaje1+=100;
 				flechitas[flechaActual-1].setP1Scored(true);
 			}
 			}
 		}	
 		break;
-	case 37:
+	case "LEFT":
+
 		//+*+*+*+*+*FLECHA IZQUIERDA+*+*+*+*+*+*+*+*+*+*
 		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-			if(flechitas[flechaActual-1].getType()==3&&p1.getRojoDir()==37) {
+			if(flechitas[flechaActual-1].getType()==3) {
 			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
@@ -421,10 +424,11 @@ public void score() {
 				}
 			}
 		break;
-	case 39:
+	case "RIGHT":
+	
 		//+*+*+*+*+*FLECHA DERECHA+*+*+*+*+*+*+*+*+*+*
 				//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-					if(flechitas[flechaActual-1].getType()==4&&p1.getRojoDir()==39) {
+					if(flechitas[flechaActual-1].getType()==4) {
 					//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 						if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 					//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
@@ -435,10 +439,11 @@ public void score() {
 						}
 					}
 		break;
-	case 40:
+	case "DOWN":
+	
 		//+*+*+*+*+*FLECHA ABAJO+*+*+*+*+*+*+*+*+*+*
 		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-			if(flechitas[flechaActual-1].getType()==2&&p1.getRojoDir()==40) {
+			if(flechitas[flechaActual-1].getType()==2) {
 			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
@@ -449,13 +454,20 @@ public void score() {
 				}
 			}
 		break;
+	}
+	}
 		
-		//*/*/*/*/*/*/*/*/*JUGADOR 2*/*/*/*/*/*/*/*/*/
-		
-	case 87:
+	
+	
+
+}
+public void score2(Message m) {
+	switch(m.getKey()) {
+	//*/*/*/*/*/*/*/*/*JUGADOR 1*/*/*/*/*/*/*/*/*/
+	case "UP":
 		//+*+*+*+*+*FLECHA ARRIBA+*+*+*+*+*+*+*+*+*+*
 		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-		if(flechitas[flechaActual-1].getType()==1&&p2.getAzulDir()==87) {
+		if(flechitas[flechaActual-1].getType()==1) {
 		//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 			if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 		//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
@@ -464,14 +476,12 @@ public void score() {
 				flechitas[flechaActual-1].setP2Scored(true);
 			}
 			}
-		}
-		
+		}	
 		break;
-		
-	case 65:
+	case "LEFT":
 		//+*+*+*+*+*FLECHA IZQUIERDA+*+*+*+*+*+*+*+*+*+*
 		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-			if(flechitas[flechaActual-1].getType()==3&&p2.getAzulDir()==65) {
+			if(flechitas[flechaActual-1].getType()==3) {
 			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
@@ -482,26 +492,24 @@ public void score() {
 				}
 			}
 		break;
-		
-	case 68:
+	case "RIGHT":
 		//+*+*+*+*+*FLECHA DERECHA+*+*+*+*+*+*+*+*+*+*
-		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRazulECCION DE INPUT DEL JUGADOR SEA LA MISMA
-			if(flechitas[flechaActual-1].getType()==4&&p2.getAzulDir()==68) {
-			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
-				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
-			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
-				if(flechitas[flechaActual-1].isP2Scored()==false) {
-					puntaje2+=100;
-					flechitas[flechaActual-1].setP2Scored(true);
-				}
-				}
-			}
-		
+				//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
+					if(flechitas[flechaActual-1].getType()==4) {
+					//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
+						if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
+					//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
+						if(flechitas[flechaActual-1].isP2Scored()==false) {
+							puntaje2+=100;
+							flechitas[flechaActual-1].setP2Scored(true);
+						}
+						}
+					}
 		break;
-	case 83: 
+	case "DOWN":
 		//+*+*+*+*+*FLECHA ABAJO+*+*+*+*+*+*+*+*+*+*
 		//***PRIMERO, COMPRUEBA QUE LA FLECHA ACTUAL Y LA DIRECCION DE INPUT DEL JUGADOR SEA LA MISMA
-			if(flechitas[flechaActual-1].getType()==2&&p2.getAzulDir()==83) {
+			if(flechitas[flechaActual-1].getType()==2) {
 			//***DESPUES, COMPUREBA QUE LA FLECHA SE ENCUENTRE ACTUALMENTE DENTRO DEL CIRCULO
 				if(flechitas[flechaActual-1].getPosY()>518&&flechitas[flechaActual-1].getPosY()<630) {
 			//***POR ULTIMO, VERIFICA QUE NO SE HAYAN MARCADO PUNTOS YA POR ESA MISMA FLECHA
@@ -513,6 +521,7 @@ public void score() {
 			}
 		break;
 	}
+		
 	
 	
 
@@ -521,13 +530,14 @@ public void score() {
 	//MULTICLIENTE/OBSERVER
 	public void onMessage(Session s, String msg) {
 		
-		System.out.println("Mensaje llegó de:"+ s.getID() + ":" + msg);
-		
+		//System.out.println("Mensaje llegó de:"+ s.getID() + ":" + msg);
 		//DESERIALIZAR 
 		Gson gson = new Gson();
 		Message direccion = gson.fromJson(msg, Message.class);
-		//direc = direccion.getKey();
 		s.setMessage(direccion);
+		score1(launcher.getSesiones().get(0).getMessage());
+		score2(launcher.getSesiones().get(1).getMessage());
+		
 	}
 
 }

@@ -48,7 +48,7 @@ public class TCPLauncher extends Thread {
 				System.out.println("Esperando conexión....");
 				Socket socketcito = server.accept();
 				Session session = new Session(socketcito, this.sesiones.size());
-				System.out.println("Sesión creada");
+				//System.out.println("Sesión creada");
 				
 				session.setObserver(observer);
 				session.start();
